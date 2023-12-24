@@ -4,32 +4,22 @@
 
 ## Створення опитування
 ### Успішне створення
-![screen1](./images/screen1.png)
-
-### Неуспішне створення
-![screen2](./images/screen2.png)
-
-
+![screen1](./images/img1.png)
 ## Редагування опитування
 ### Успішне редагування
-![screen3](./images/screen3.png)
-
+![screen2](./images/img2.png)
 ### Неуспішне редагування
-![screen4](./images/screen4.png)
-
-
-## Отримання всіх опитувань
-### Успішне отримання
-![screen5](./images/screen5.png)
-
+![screen3](./images/img3.png)
 
 ## Отримання одного опитування
 ### Успішне отримання
-![screen6](./images/screen6.png)
+![screen4](./images/img4.png)
+### Неуспішне редагування
+![screen5](./images/img5.png)
 
 ## Видалення опитування
 ### Успішне видалення
-![screen7](./images/screen7.png)
+![screen6](./images/img6.png)
 
 ### Неуспішне видалення
-![screen8](./images/screen8.png)
+![screen7](./images/img7.png)

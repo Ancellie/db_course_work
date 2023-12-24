@@ -7,7 +7,6 @@ module.exports = {
       serviceWorker: true,
       updatePopup: true
     },
-    ,
     ['container', {
       type: 'vue',
       before: '<pre class="vue-container"><code>',
@@ -76,7 +75,7 @@ module.exports = {
 
     lastUpdated: 'Останнє оновлення', // string | boolean
       // Assumes GitHub. Can also be a full GitLab url.
-    repo: 'https://github.com/AntonenkoTymofii/edu_db_labs_group1',
+    repo: 'https://github.com/Ancellie/db_course_work',
     // Customising the header label
     // Defaults to "GitHub"/"GitLab"/"Bitbucket" depending on `themeConfig.repo`
     repoLabel: 'Github',
