@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model RoleHasPermission {
+  appointed     DateTime   @updatedAt @default(now())
+  roleId        Int        @map("role_id")
+  permissionId  Int        @map("permission_id")
+  permission    Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  role          Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  @@map("role_has_permission")
+  @@id([roleId, permissionId])
+}
+
+model Permission {
+  id      Int                     @id @default(autoincrement())
+  name    String
+  roles   RoleHasPermission[]
+  @@map("permission")
+}
+
+model AnswerVariant {
+  id            Int       @id @default(autoincrement())
+  text          String
+  question      Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId    Int       @map("question_id")
+  answers       Answer[]
+  @@map("answer_variant")
+}
+
+model Question {
+  id                Int                @id @default(autoincrement())
+  text              String
+  surveyId         Int                 @map("survey_id")
+  survey            Survey             @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  answerVariants   AnswerVariant[]
+  @@map("question")
+}
+
+model Role {
+  id            Int                     @id @default(autoincrement())
+  name          String
+  permissions   RoleHasPermission[]
+  users         User[]
+  @@map("role")
+}
+
+enum SurveyState {
+  OPENED
+  CLOSED
+  PAUSED
+}
+
+model Survey {
+  id             Int              @id @default(autoincrement())
+  title          String
+  description    String?
+  created        DateTime         @default(now())
+  userId        Int              @map("user_id")
+  state          SurveyState      @default(OPENED)
+  questions      Question[]
+  passedSurvey  PassedSurvey[]
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("survey")
+}
+
+model PassedSurvey {
+  id         Int          @id @default(autoincrement())
+  survey     Survey       @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  surveyId  Int          @map("survey_id")
+  passed     DateTime     @default(now())
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int           @map("user_id")
+  answers    Answer[]
+  @@map("passedSurvey")
+}
+
+model Answer {
+  id                  Int               @id @default(autoincrement())
+  variant             AnswerVariant     @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  variantId          Int               @map("variant_id")
+  passedSurveyId    Int               @map("passed_survey_id")
+  survey              PassedSurvey      @relation(fields: [passedSurveyId], references: [id], onDelete: Cascade)
+  @@map("answer")
+}
+
+model User {
+  id              Int      @id @default(autoincrement())
+  firstname       String
+  lastname        String
+  nickname        String
+  email           String
+  password        String
+  roleId         Int       @map("role_id")
+  passedSurveys  PassedSurvey[]
+  surveys         Survey[]
+  role            Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  @@map("user")
+}
+
