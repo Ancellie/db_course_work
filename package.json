@@ -6,6 +6,9 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "docs:dev": "npx vuepress dev docs",
+    "docs:build": "npx vuepress build docs",
+    "publish": "publish.sh",
     "build": "src/node_modules/.bin/nest build",
     "format": "src/node_modules/.bin/prettier --write \\\\\\\"src/**/*.ts\\\\\\\" \\\\\\\"test/**/*.ts\\\\\\\"",
     "start": "src/node_modules/.bin/nest start",
