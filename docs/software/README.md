@@ -220,294 +220,344 @@ RESTfull API для управління даними таблиці Survey ст
 було створено за допомогою фреймворку Spring Boot на мові Java. 
 RESTfull API представляє собою CRUD застосунок. 
 
-### Файл .gradle з встановленими залежностями
+### Файли для сутностей
 
 ```
-    plugins {
-	    id 'java'
-	    id 'org.springframework.boot' version '3.2.0'
-	    id 'io.spring.dependency-management' version '1.1.4'
-    }
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString} from "class-validator";
+import {SurveyState} from "@prisma/client";
+export class CreateSurveyDTO{
+    @IsString()
+    @IsNotEmpty()
+    title: string
+    @IsString()
+    @IsOptional()
+    description?: string
+    @IsNumber()
+    @IsNotEmpty()
+    userId: number
+    @IsEnum(SurveyState)
+    @IsOptional()
+    state?: SurveyState
+}
+```
+```
+import {IsEnum, IsNumber, IsOptional, IsString} from "class-validator";
+import {SurveyState} from "@prisma/client";
 
-    group = 'com.example'
-    version = '0.0.1-SNAPSHOT'
-
-    java {
-	    sourceCompatibility = '17'
-    }
-
-    repositories {
-	    mavenCentral()
-    }
-
-    dependencies {
-	    implementation 'org.springframework.boot:spring-boot-starter-web'
-	    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	    implementation 'mysql:mysql-connector-java:8.0.28'
-	    runtimeOnly 'mysql:mysql-connector-java'
-	    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    }
-
-    tasks.named('test') {
-	    useJUnitPlatform()
-    }
+export class UpdateSurveyDTO {
+    @IsString()
+    @IsOptional()
+    title?: string
+    @IsString()
+    @IsOptional()
+    description?: string
+    @IsNumber()
+    @IsOptional()
+    userId?: number
+    @IsEnum(SurveyState)
+    @IsOptional()
+    state?: SurveyState
+}
 ```
 
 ### Підключення бази даних
 
 ```
-    spring.jpa.hibernate.ddl-auto=update
-    spring.datasource.url=jdbc:mysql://localhost:3306/lab6?useUnicode=true&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
-    spring.datasource.username=root
-    spring.datasource.password=7327Tim2005&
+  generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model RoleHasPermission {
+  appointed     DateTime   @updatedAt @default(now())
+  roleId        Int        @map("role_id")
+  permissionId  Int        @map("permission_id")
+  permission    Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  role          Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  @@map("role_has_permission")
+  @@id([roleId, permissionId])
+}
+
+model Permission {
+  id      Int                     @id @default(autoincrement())
+  name    String
+  roles   RoleHasPermission[]
+  @@map("permission")
+}
+
+model AnswerVariant {
+  id            Int       @id @default(autoincrement())
+  text          String
+  question      Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId    Int       @map("question_id")
+  answers       Answer[]
+  @@map("answer_variant")
+}
+
+model Question {
+  id                Int                @id @default(autoincrement())
+  text              String
+  surveyId         Int                 @map("survey_id")
+  survey            Survey             @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  answerVariants   AnswerVariant[]
+  @@map("question")
+}
+
+model Role {
+  id            Int                     @id @default(autoincrement())
+  name          String
+  permissions   RoleHasPermission[]
+  users         User[]
+  @@map("role")
+}
+
+enum SurveyState {
+  OPENED
+  CLOSED
+  PAUSED
+}
+
+model Survey {
+  id             Int              @id @default(autoincrement())
+  title          String
+  description    String?
+  created        DateTime         @default(now())
+  userId        Int              @map("user_id")
+  state          SurveyState      @default(OPENED)
+  questions      Question[]
+  passedSurvey  PassedSurvey[]
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("survey")
+}
+
+model PassedSurvey {
+  id         Int          @id @default(autoincrement())
+  survey     Survey       @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  surveyId  Int          @map("survey_id")
+  passed     DateTime     @default(now())
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int           @map("user_id")
+  answers    Answer[]
+  @@map("passedSurvey")
+}
+
+model Answer {
+  id                  Int               @id @default(autoincrement())
+  variant             AnswerVariant     @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  variantId          Int               @map("variant_id")
+  passedSurveyId    Int               @map("passed_survey_id")
+  survey              PassedSurvey      @relation(fields: [passedSurveyId], references: [id], onDelete: Cascade)
+  @@map("answer")
+}
+
+model User {
+  id              Int      @id @default(autoincrement())
+  firstname       String
+  lastname        String
+  nickname        String
+  email           String
+  password        String
+  roleId         Int       @map("role_id")
+  passedSurveys  PassedSurvey[]
+  surveys         Survey[]
+  role            Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  @@map("user")
+}
+
 
 ```
 
 ### Основний клас для запуску API
 ```
-    package com.example.lab6;
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import {ValidationPipe} from "@nestjs/common";
 
-    import org.springframework.boot.SpringApplication;
-    import org.springframework.boot.autoconfigure.SpringBootApplication;
-    
-    @SpringBootApplication
-    public class Lab6Application {
-    
-        public static void main(String[] args) {
-            SpringApplication.run(Lab6Application.class, args);
-        }
-    }
-```
 
-### Клас сутності для взаємодії з БД
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
+  await app.listen(3000);
+}
+bootstrap();
 
-```
-    package com.example.lab6.Entity;
-
-    import jakarta.persistence.*;
-    import java.sql.Date;
-    import java.time.LocalDate;
-    
-    @Entity
-    @Table(name = "survey")
-    public class SurveyEntity {
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
-        private String title;
-        private String description;
-        private Date created = Date.valueOf(LocalDate.now());
-    
-        public SurveyEntity() {
-        }
-        public void setId(Long id) {
-            this.id = id;
-        }
-    
-        public Long getId() {
-            return id;
-        }
-    
-        public String getTitle() {
-            return title;
-        }
-    
-        public void setTitle(String title) {
-            this.title = title;
-        }
-    
-        public String getDescription() {
-            return description;
-        }
-    
-        public void setDescription(String description) {
-            this.description = description;
-        }
-    
-        public Date getCreated() {
-            return created;
-        }
-    
-        public void setCreated(Date created) {
-            this.created = created;
-        }
-    }
 ```
 
 ### Контролер для роботи з опитуваннями
 
 ```
-    package com.example.lab6.Controller;
+import {Body, Controller, Delete, Get, Param, Patch, Post} from "@nestjs/common";
+import {SurveyService} from "./SurveyService";
+import {CreateSurveyDTO} from "./dto/CreateSurveyDTO";
+import {SurveyPipe} from "./pipes/SurveyPipe";
+import {SurveyByIdPipe} from "./pipes/SurveyByIdPipe";
+import {UpdateSurveyDTO} from "./dto/UpdateSurveyDTO";
 
-    import com.example.lab6.Entity.SurveyEntity;
-    import com.example.lab6.Exception.SurveyAlreadyExistException;
-    import com.example.lab6.Exception.SurveyNotFoundException;
-    import com.example.lab6.Service.SurveyService;
-    import org.springframework.beans.factory.annotation.Autowired;
-    import org.springframework.http.ResponseEntity;
-    import org.springframework.web.bind.annotation.*;
-
-    @RestController
-    @RequestMapping("/surveys")
-    public class SurveyController {
-
-        @Autowired
-        private SurveyService surveyService;
-
-        @PostMapping
-        public ResponseEntity createSurvey(@RequestBody SurveyEntity survey){
-        try {
-            surveyService.createSurvey(survey);
-            return ResponseEntity.ok("Опитування було створено успішно");
-        } catch (SurveyAlreadyExistException exception){
-            return ResponseEntity.badRequest().body(exception.getMessage());
-        } catch (Exception exception){
-            return ResponseEntity.badRequest().body("Відбулась помилка створення опитування!");
-        }
-        }
-
-        @GetMapping
-        public ResponseEntity getOneSurvey(@RequestParam Long id){
-            try {
-                return ResponseEntity.ok(surveyService.getOne(id));
-            } catch (SurveyNotFoundException exception){
-                return ResponseEntity.badRequest().body(exception.getMessage());
-            } catch (Exception exception){
-                return ResponseEntity.badRequest().body("Відбулась помилка отримання опитувань");
-            }
-        }
-
-        @GetMapping("/all")
-        public ResponseEntity getSurveys(){
-            try {
-                return ResponseEntity.ok(surveyService.getSurveys());
-            } catch (SurveyNotFoundException exception){
-                return ResponseEntity.badRequest().body(exception.getMessage());
-            } catch (Exception exception){
-                return ResponseEntity.badRequest().body("Відбулась помилка отримання опитувань");
-            }
-        }
-
-        @DeleteMapping("/{id}")
-        public ResponseEntity deleteSurvey(@PathVariable Long id){
-            try {
-                return ResponseEntity.ok("Було успішно видалено опитування з id: " +
-                        surveyService.deleteSurvey(id));
-            } catch (SurveyNotFoundException exception){
-                return ResponseEntity.badRequest().body(exception.getMessage());
-            } catch (Exception exception){
-                return ResponseEntity.badRequest().body("Відбулась помилка отримання опитувань");
-            }
-        }
-
-         @PutMapping
-        public ResponseEntity updateSurvey(@RequestParam Long id,
-                                           @RequestBody SurveyEntity survey){
-            try {
-                surveyService.updateSurvey(id, survey);
-                return ResponseEntity.ok("Опитування було оновлено успішно");
-            }catch (SurveyAlreadyExistException exception) {
-                return ResponseEntity.badRequest().body(exception.getMessage());
-            } catch (Exception exception){
-                return ResponseEntity.badRequest().body("Відбулась помилка оновлення опитування!");
-            }
-        }
+@Controller('/survey')
+export class SurveyController {
+    constructor(private readonly surveyService: SurveyService) {
     }
+
+    @Post()
+    create(@Body(SurveyPipe) body: CreateSurveyDTO) {
+        return this.surveyService.create(body)
+
+    }
+
+    @Get('/:surveyId')
+    getById (
+        @Param('surveyId', SurveyByIdPipe) surveyId: number
+    ) {
+        return this.surveyService.getById(surveyId);
+    }
+
+    @Patch('/:surveyId')
+    update (
+        @Param('surveyId', SurveyByIdPipe) surveyId: number,
+        @Body() body: UpdateSurveyDTO,
+    ) {
+        return this.surveyService.updateById(surveyId, body);
+    }
+
+    @Delete('/:surveyId')
+    deleteById (
+        @Param('surveyId', SurveyByIdPipe) surveyId: number,
+    ) {
+        return this.surveyService.deleteById(surveyId);
+    }
+}
 ```
 
 ### Репозиторій для роботи з опитуванняи
 
 ```
-    package com.example.lab6.Repository;
+import {Injectable} from "@nestjs/common";
+import {PrismaService} from "../PrismaService";
+import {Prisma} from "@prisma/client";
 
-    import com.example.lab6.Entity.SurveyEntity;
-    import org.springframework.data.repository.CrudRepository;
-    
-    public interface SurveyRepo extends CrudRepository <SurveyEntity, Long>{
-        SurveyEntity findByTitle(String title);
+@Injectable()
+export class SurveyRepository{
+    constructor(private readonly prismaService: PrismaService) {}
+    create(data: Prisma.SurveyUncheckedCreateInput){
+        return this.prismaService.survey.create({data})
     }
-```
 
+    getById (id: number) {
+        return this.prismaService.survey.findUnique({
+            where: {
+                id,
+            },
+        });
+    }
+
+    updateById (id: number, data: Prisma.SurveyUncheckedUpdateInput) {
+        return this.prismaService.survey.update({
+            where: {
+                id,
+            },
+            data,
+        });
+    }
+
+    deleteById (id: number) {
+        return this.prismaService.survey.delete({
+            where: {
+                id,
+            },
+        });
+    }
+}
+```
+### Репозиторій для роботи з користувачем
+```
+import {Injectable} from "@nestjs/common";
+import {PrismaService} from "../PrismaService";
+
+@Injectable()
+export class UserRepository {
+    constructor (
+        private readonly prismaService: PrismaService,
+    ) {}
+
+    getById (id: number) {
+        return this.prismaService.user.findUnique({
+            where: {
+                id,
+            },
+        });
+    }
+}
+```
 ### Сервіс для роботи з опитуваннями
 
 ```
-    package com.example.lab6.Service;
+import {Injectable} from "@nestjs/common";
+import {SurveyRepository} from "./repositories/SurveyRepository";
+import {CreateSurveyDTO} from "./dto/CreateSurveyDTO";
+import {UpdateSurveyDTO} from "./dto/UpdateSurveyDTO";
 
-    import com.example.lab6.Entity.SurveyEntity;
-    import com.example.lab6.Exception.SurveyAlreadyExistException;
-    import com.example.lab6.Exception.SurveyNotFoundException;
-    import com.example.lab6.Repository.SurveyRepo;
-    import org.springframework.beans.factory.annotation.Autowired;
-    import org.springframework.stereotype.Service;
-    
-    @Service
-    public class SurveyService {
-    
-        @Autowired
-        private SurveyRepo surveyRepo;
-    
-        public SurveyEntity createSurvey(SurveyEntity survey) throws SurveyAlreadyExistException {
-            if(surveyRepo.findByTitle(survey.getTitle()) != null){
-                throw new SurveyAlreadyExistException("Опитування з такою назвою вже існує!");
-            }
-            return surveyRepo.save(survey);
-        }
-        
-        public SurveyEntity getOne(Long id) throws SurveyNotFoundException {
-            SurveyEntity survey = surveyRepo.findById(id).get();
-            if(survey == null){
-                throw new SurveyNotFoundException("Такого опитування не існує");
-            }
-            return survey;
-        }
-        
-        public Iterable<SurveyEntity> getSurveys() throws SurveyNotFoundException {
-            Iterable<SurveyEntity> surveyEntities = surveyRepo.findAll();
-            if (surveyEntities == null){
-                throw new SurveyNotFoundException("Опитувань не існує");
-            }
-            return surveyEntities;
-        }
-        
-        public Long deleteSurvey(Long id) throws SurveyNotFoundException {
-            if (surveyRepo.findById(id) == null){
-                throw new SurveyNotFoundException("Такого опитування вже не існує");
-            }
-            surveyRepo.deleteById(id);
-            return id;
-        }
-        
-        public SurveyEntity updateSurvey(Long id, SurveyEntity survey) throws SurveyAlreadyExistException {
-            SurveyEntity surveyEntity = surveyRepo.findById(id).get();
-            surveyEntity.setTitle(survey.getTitle());
-            surveyEntity.setDescription(survey.getDescription());
-            if(surveyRepo.findByTitle(surveyEntity.getTitle()) != null){
-                throw new SurveyAlreadyExistException("Опитування з такою назвою вже існує!");
-            }
-            return surveyRepo.save(surveyEntity);
-        }
+@Injectable()
+export class SurveyService{
+    constructor(private readonly surveyRepository: SurveyRepository) {}
+
+    create(body: CreateSurveyDTO){
+        return this.surveyRepository.create(body)
     }
+
+    getById (id: number) {
+        return this.surveyRepository.getById(id);
+    }
+
+    updateById (id: number, body: UpdateSurveyDTO) {
+        return this.surveyRepository.updateById(id, body);
+    }
+
+    deleteById (id: number) {
+        return this.surveyRepository.deleteById(id);
+    }
+}
 ```
 
 ### Виняткові ситуації, які можуть виникнути
 
 ```
-    package com.example.lab6.Exception;
-    
-    public class SurveyAlreadyExistException extends Exception{
-        public SurveyAlreadyExistException(String message) {
-            super(message);
-        }
+import {Injectable, NotFoundException, PipeTransform} from "@nestjs/common";
+import {SurveyRepository} from "../repositories/SurveyRepository";
+@Injectable()
+export class SurveyByIdPipe implements PipeTransform {
+    constructor(
+        private readonly surveyRepository: SurveyRepository,
+    ) {}
+    async transform(surveyId: number) {
+        const survey = await this.surveyRepository.getById(+surveyId);
+
+        if (!survey) throw new NotFoundException('Survey with such id is not found');
+
+        return +surveyId;
     }
+}
 ```
 
 ```
-    package com.example.lab6.Exception;
+import {Injectable, NotFoundException, PipeTransform} from "@nestjs/common";
+import {CreateSurveyDTO} from "../dto/CreateSurveyDTO";
+import {UserRepository} from "../repositories/UserRepository";
 
-    public class SurveyNotFoundException extends Exception{
-        public SurveyNotFoundException(String message) {
-            super(message);
-        }
+@Injectable()
+export class SurveyPipe implements PipeTransform {
+    constructor(
+        private readonly userRepository: UserRepository,
+    ) {}
+    async transform(body: CreateSurveyDTO) {
+        const user = await this.userRepository.getById(body.userId);
+
+        if (!user) throw new NotFoundException('User with such id is not found');
+
+        return body;
     }
+}
 ```
