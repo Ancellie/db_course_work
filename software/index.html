@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Реалізація інформаційного та програмного забезпечення | 1. Система організації та управління опитуваннями експертів</title>
+    <meta name="generator" content="VuePress 1.9.10">
+    <link rel="icon" href="/db_course_work/favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta name="description" content="Курсова робота з дисципліни &quot;Бази даних&quot;">
+    
+    <link rel="preload" href="/db_course_work/assets/css/0.styles.f40791a5.css" as="style"><link rel="preload" href="/db_course_work/assets/js/app.a561e542.js" as="script"><link rel="preload" href="/db_course_work/assets/js/2.35499e44.js" as="script"><link rel="preload" href="/db_course_work/assets/js/1.3c0c2200.js" as="script"><link rel="preload" href="/db_course_work/assets/js/38.e50702e8.js" as="script"><link rel="prefetch" href="/db_course_work/assets/js/10.d50827c4.js"><link rel="prefetch" href="/db_course_work/assets/js/13.c3fb1759.js"><link rel="prefetch" href="/db_course_work/assets/js/14.dd517268.js"><link rel="prefetch" href="/db_course_work/assets/js/15.c85f1af7.js"><link rel="prefetch" href="/db_course_work/assets/js/16.7f817055.js"><link rel="prefetch" href="/db_course_work/assets/js/17.a8127531.js"><link rel="prefetch" href="/db_course_work/assets/js/18.1a4be454.js"><link rel="prefetch" href="/db_course_work/assets/js/19.f20a1cd0.js"><link rel="prefetch" href="/db_course_work/assets/js/20.0574f407.js"><link rel="prefetch" href="/db_course_work/assets/js/21.dded2881.js"><link rel="prefetch" href="/db_course_work/assets/js/22.8b37f346.js"><link rel="prefetch" href="/db_course_work/assets/js/23.492b4904.js"><link rel="prefetch" href="/db_course_work/assets/js/24.6eb4e200.js"><link rel="prefetch" href="/db_course_work/assets/js/25.c8c5fbaa.js"><link rel="prefetch" href="/db_course_work/assets/js/26.f80470b3.js"><link rel="prefetch" href="/db_course_work/assets/js/27.e362e0c8.js"><link rel="prefetch" href="/db_course_work/assets/js/28.aee0c60d.js"><link rel="prefetch" href="/db_course_work/assets/js/29.24e57c03.js"><link rel="prefetch" href="/db_course_work/assets/js/3.1c6ef825.js"><link rel="prefetch" href="/db_course_work/assets/js/30.abe227f8.js"><link rel="prefetch" href="/db_course_work/assets/js/31.59b22b8d.js"><link rel="prefetch" href="/db_course_work/assets/js/32.c0eb2155.js"><link rel="prefetch" href="/db_course_work/assets/js/33.71fa3ec5.js"><link rel="prefetch" href="/db_course_work/assets/js/34.9f9c9be3.js"><link rel="prefetch" href="/db_course_work/assets/js/35.c40ccbc2.js"><link rel="prefetch" href="/db_course_work/assets/js/36.9ce74167.js"><link rel="prefetch" href="/db_course_work/assets/js/37.9e08b7e9.js"><link rel="prefetch" href="/db_course_work/assets/js/39.928c6029.js"><link rel="prefetch" href="/db_course_work/assets/js/4.dd47776f.js"><link rel="prefetch" href="/db_course_work/assets/js/40.934c1873.js"><link rel="prefetch" href="/db_course_work/assets/js/41.e4305d7f.js"><link rel="prefetch" href="/db_course_work/assets/js/5.0650d797.js"><link rel="prefetch" href="/db_course_work/assets/js/6.2971ce49.js"><link rel="prefetch" href="/db_course_work/assets/js/7.7dc827fd.js"><link rel="prefetch" href="/db_course_work/assets/js/8.b4967f49.js"><link rel="prefetch" href="/db_course_work/assets/js/9.c47d629a.js"><link rel="prefetch" href="/db_course_work/assets/js/vendors~docsearch.e3370f81.js">
+    <link rel="stylesheet" href="/db_course_work/assets/css/0.styles.f40791a5.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/db_course_work/" class="home-link router-link-active"><!----> <span class="site-name">1. Система організації та управління опитуваннями експертів</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/db_course_work/" class="nav-link">
+  Початок
+</a></div> <a href="https://github.com/Ancellie/db_course_work" target="_blank" rel="noopener noreferrer" class="repo-link">
+    Github
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/db_course_work/" class="nav-link">
+  Початок
+</a></div> <a href="https://github.com/Ancellie/db_course_work" target="_blank" rel="noopener noreferrer" class="repo-link">
+    Github
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav>  <ul class="sidebar-links"><li><a href="/db_course_work/intro/" class="sidebar-link">Вступ</a></li><li><section class="sidebar-group collapsable depth-0"><a href="/db_course_work/requirements/" class="sidebar-heading clickable"><span>Розроблення загальних вимог до системи</span> <span class="arrow right"></span></a> <!----></section></li><li><a href="/db_course_work/use%20cases/" class="sidebar-link">Розроблення вимог до функціональности системи</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/db_course_work/use%20cases/#загальна-схема" class="sidebar-link">Загальна схема</a></li><li class="sidebar-sub-header"><a href="/db_course_work/use%20cases/#схема-клієнта" class="sidebar-link">Схема клієнта</a></li><li class="sidebar-sub-header"><a href="/db_course_work/use%20cases/#схема-експерта" class="sidebar-link">Схема експерта</a></li><li class="sidebar-sub-header"><a href="/db_course_work/use%20cases/#сценаріі-використання" class="sidebar-link">Сценарії використання</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/db_course_work/use%20cases/#user-signup" class="sidebar-link">USER.SIGNUP</a></li><li class="sidebar-sub-header"><a href="/db_course_work/use%20cases/#user-signin" class="sidebar-link">USER.SIGNIN</a></li><li class="sidebar-sub-header"><a href="/db_course_work/use%20cases/#survey-create" class="sidebar-link">SURVEY.CREATE</a></li><li class="sidebar-sub-header"><a href="/db_course_work/use%20cases/#survey-close" class="sidebar-link">SURVEY.CLOSE</a></li><li class="sidebar-sub-header"><a href="/db_course_work/use%20cases/#survey-get-results" class="sidebar-link">SURVEY.GET_RESULTS</a></li><li class="sidebar-sub-header"><a href="/db_course_work/use%20cases/#survey-add-question" class="sidebar-link">SURVEY.ADD_QUESTION</a></li><li class="sidebar-sub-header"><a href="/db_course_work/use%20cases/#survey-delete-question" class="sidebar-link">SURVEY.DELETE_QUESTION</a></li><li class="sidebar-sub-header"><a href="/db_course_work/use%20cases/#expert-take-survey" class="sidebar-link">EXPERT.TAKE_SURVEY</a></li><li class="sidebar-sub-header"><a href="/db_course_work/use%20cases/#expert-change-answers" class="sidebar-link">EXPERT.CHANGE_ANSWERS</a></li><li class="sidebar-sub-header"><a href="/db_course_work/use%20cases/#survey-export" class="sidebar-link">SURVEY.EXPORT</a></li><li class="sidebar-sub-header"><a href="/db_course_work/use%20cases/#survey-share" class="sidebar-link">SURVEY.SHARE</a></li><li class="sidebar-sub-header"><a href="/db_course_work/use%20cases/#survey-get-question" class="sidebar-link">SURVEY.GET_QUESTION</a></li></ul></li></ul></li><li><a href="/db_course_work/design/" class="sidebar-link">Проектування інформаційного забезпечення</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/db_course_work/design/#mодель-бізнес-об-єктів" class="sidebar-link">Mодель бізнес-об'єктів</a></li><li class="sidebar-sub-header"><a href="/db_course_work/design/#er-модель" class="sidebar-link">ER-модель</a></li><li class="sidebar-sub-header"><a href="/db_course_work/design/#реляціина-схема" class="sidebar-link">Реляційна схема</a></li></ul></li><li><a href="/db_course_work/software/" aria-current="page" class="active sidebar-link">Реалізація інформаційного та програмного забезпечення</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/db_course_work/software/#sql-скрипт-для-створення-на-початкового-наповнення-бази-даних" class="sidebar-link">SQL-скрипт для створення на початкового наповнення бази даних</a></li><li class="sidebar-sub-header"><a href="/db_course_work/software/#restfull-сервіс-для-управління-даними" class="sidebar-link">RESTfull сервіс для управління даними</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/db_course_work/software/#фаили-для-сутностеи" class="sidebar-link">Файли для сутностей</a></li><li class="sidebar-sub-header"><a href="/db_course_work/software/#підключення-бази-даних" class="sidebar-link">Підключення бази даних</a></li><li class="sidebar-sub-header"><a href="/db_course_work/software/#основнии-клас-для-запуску-api" class="sidebar-link">Основний клас для запуску API</a></li><li class="sidebar-sub-header"><a href="/db_course_work/software/#контролер-для-роботи-з-опитуваннями" class="sidebar-link">Контролер для роботи з опитуваннями</a></li><li class="sidebar-sub-header"><a href="/db_course_work/software/#репозиторіи-для-роботи-з-опитуванняи" class="sidebar-link">Репозиторій для роботи з опитуванняи</a></li><li class="sidebar-sub-header"><a href="/db_course_work/software/#репозиторіи-для-роботи-з-користувачем" class="sidebar-link">Репозиторій для роботи з користувачем</a></li><li class="sidebar-sub-header"><a href="/db_course_work/software/#сервіс-для-роботи-з-опитуваннями" class="sidebar-link">Сервіс для роботи з опитуваннями</a></li><li class="sidebar-sub-header"><a href="/db_course_work/software/#виняткові-ситуаціі-які-можуть-виникнути" class="sidebar-link">Виняткові ситуації, які можуть виникнути</a></li></ul></li></ul></li><li><a href="/db_course_work/test/" class="sidebar-link">Тестування працездатності системи</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/db_course_work/test/#створення-опитування" class="sidebar-link">Створення опитування</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/db_course_work/test/#успішне-створення" class="sidebar-link">Успішне створення</a></li></ul></li><li class="sidebar-sub-header"><a href="/db_course_work/test/#редагування-опитування" class="sidebar-link">Редагування опитування</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/db_course_work/test/#успішне-редагування" class="sidebar-link">Успішне редагування</a></li><li class="sidebar-sub-header"><a href="/db_course_work/test/#неуспішне-редагування" class="sidebar-link">Неуспішне редагування</a></li></ul></li><li class="sidebar-sub-header"><a href="/db_course_work/test/#отримання-одного-опитування" class="sidebar-link">Отримання одного опитування</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/db_course_work/test/#успішне-отримання" class="sidebar-link">Успішне отримання</a></li><li class="sidebar-sub-header"><a href="/db_course_work/test/#неуспішне-редагування-2" class="sidebar-link">Неуспішне редагування</a></li></ul></li><li class="sidebar-sub-header"><a href="/db_course_work/test/#видалення-опитування" class="sidebar-link">Видалення опитування</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/db_course_work/test/#успішне-видалення" class="sidebar-link">Успішне видалення</a></li><li class="sidebar-sub-header"><a href="/db_course_work/test/#неуспішне-видалення" class="sidebar-link">Неуспішне видалення</a></li></ul></li></ul></li><li><a href="/db_course_work/conclusion/" class="sidebar-link">Висновки</a></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="реалізація-інформаціиного-та-програмного-забезпечення"><a href="#реалізація-інформаціиного-та-програмного-забезпечення" class="header-anchor">#</a> Реалізація інформаційного та програмного забезпечення</h1> <h2 id="sql-скрипт-для-створення-на-початкового-наповнення-бази-даних"><a href="#sql-скрипт-для-створення-на-початкового-наповнення-бази-даних" class="header-anchor">#</a> SQL-скрипт для створення на початкового наповнення бази даних</h2> <div class="language-sql extra-class"><pre class="language-sql"><code>
+    <span class="token comment">-- MySQL Workbench Forward Engineering</span>
+
+    <span class="token keyword">SET</span> <span class="token variable">@OLD_UNIQUE_CHECKS</span><span class="token operator">=</span>@<span class="token variable">@UNIQUE_CHECKS</span><span class="token punctuation">,</span> UNIQUE_CHECKS<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">SET</span> <span class="token variable">@OLD_FOREIGN_KEY_CHECKS</span><span class="token operator">=</span>@<span class="token variable">@FOREIGN_KEY_CHECKS</span><span class="token punctuation">,</span> FOREIGN_KEY_CHECKS<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">SET</span> <span class="token variable">@OLD_SQL_MODE</span><span class="token operator">=</span>@<span class="token variable">@SQL_MODE</span><span class="token punctuation">,</span> SQL_MODE<span class="token operator">=</span><span class="token string">'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'</span><span class="token punctuation">;</span>
+
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token comment">-- Schema mydb</span>
+    <span class="token comment">-- -----------------------------------------------------</span>
+
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token comment">-- Schema mydb</span>
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token keyword">CREATE</span> <span class="token keyword">SCHEMA</span> <span class="token keyword">IF</span> <span class="token operator">NOT</span> <span class="token keyword">EXISTS</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span> <span class="token keyword">DEFAULT</span> <span class="token keyword">CHARACTER</span> <span class="token keyword">SET</span> utf8 <span class="token punctuation">;</span>
+    <span class="token keyword">USE</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span> <span class="token punctuation">;</span>
+
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token comment">-- Table `mydb`.`User`</span>
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token keyword">IF</span> <span class="token operator">NOT</span> <span class="token keyword">EXISTS</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>User<span class="token punctuation">`</span></span> <span class="token punctuation">(</span>
+    <span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>firstname<span class="token punctuation">`</span></span> <span class="token keyword">MEDIUMTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>lastname<span class="token punctuation">`</span></span> <span class="token keyword">MEDIUMTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>nickname<span class="token punctuation">`</span></span> <span class="token keyword">MEDIUMTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>email<span class="token punctuation">`</span></span> <span class="token keyword">MEDIUMTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>password<span class="token punctuation">`</span></span> <span class="token keyword">MEDIUMTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>Role_id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">,</span> <span class="token identifier"><span class="token punctuation">`</span>Role_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token keyword">INDEX</span> <span class="token identifier"><span class="token punctuation">`</span>fk_User_Role1_idx<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>Role_id<span class="token punctuation">`</span></span> <span class="token keyword">ASC</span><span class="token punctuation">)</span> VISIBLE<span class="token punctuation">,</span>
+    <span class="token keyword">CONSTRAINT</span> <span class="token identifier"><span class="token punctuation">`</span>fk_User_Role1<span class="token punctuation">`</span></span>
+        <span class="token keyword">FOREIGN</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>Role_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">REFERENCES</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Role<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">ON</span> <span class="token keyword">DELETE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span>
+        <span class="token keyword">ON</span> <span class="token keyword">UPDATE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span><span class="token punctuation">)</span>
+    <span class="token keyword">ENGINE</span> <span class="token operator">=</span> <span class="token keyword">InnoDB</span><span class="token punctuation">;</span>
+
+
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token comment">-- Table `mydb`.`Role`</span>
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token keyword">IF</span> <span class="token operator">NOT</span> <span class="token keyword">EXISTS</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Role<span class="token punctuation">`</span></span> <span class="token punctuation">(</span>
+    <span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>name<span class="token punctuation">`</span></span> <span class="token keyword">TINYTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">ENGINE</span> <span class="token operator">=</span> <span class="token keyword">InnoDB</span><span class="token punctuation">;</span>
+
+
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token comment">-- Table `mydb`.`User`</span>
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token keyword">IF</span> <span class="token operator">NOT</span> <span class="token keyword">EXISTS</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>User<span class="token punctuation">`</span></span> <span class="token punctuation">(</span>
+    <span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>firstname<span class="token punctuation">`</span></span> <span class="token keyword">MEDIUMTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>lastname<span class="token punctuation">`</span></span> <span class="token keyword">MEDIUMTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>nickname<span class="token punctuation">`</span></span> <span class="token keyword">MEDIUMTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>email<span class="token punctuation">`</span></span> <span class="token keyword">MEDIUMTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>password<span class="token punctuation">`</span></span> <span class="token keyword">MEDIUMTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>Role_id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">,</span> <span class="token identifier"><span class="token punctuation">`</span>Role_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token keyword">INDEX</span> <span class="token identifier"><span class="token punctuation">`</span>fk_User_Role1_idx<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>Role_id<span class="token punctuation">`</span></span> <span class="token keyword">ASC</span><span class="token punctuation">)</span> VISIBLE<span class="token punctuation">,</span>
+    <span class="token keyword">CONSTRAINT</span> <span class="token identifier"><span class="token punctuation">`</span>fk_User_Role1<span class="token punctuation">`</span></span>
+        <span class="token keyword">FOREIGN</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>Role_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">REFERENCES</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Role<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">ON</span> <span class="token keyword">DELETE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span>
+        <span class="token keyword">ON</span> <span class="token keyword">UPDATE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span><span class="token punctuation">)</span>
+    <span class="token keyword">ENGINE</span> <span class="token operator">=</span> <span class="token keyword">InnoDB</span><span class="token punctuation">;</span>
+
+
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token comment">-- Table `mydb`.`Survey`</span>
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token keyword">IF</span> <span class="token operator">NOT</span> <span class="token keyword">EXISTS</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Survey<span class="token punctuation">`</span></span> <span class="token punctuation">(</span>
+    <span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>title<span class="token punctuation">`</span></span> <span class="token keyword">MEDIUMTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>description<span class="token punctuation">`</span></span> <span class="token keyword">LONGTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>created<span class="token punctuation">`</span></span> <span class="token keyword">DATE</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>User_id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">,</span> <span class="token identifier"><span class="token punctuation">`</span>User_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token keyword">INDEX</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Survey_User1_idx<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>User_id<span class="token punctuation">`</span></span> <span class="token keyword">ASC</span><span class="token punctuation">)</span> VISIBLE<span class="token punctuation">,</span>
+    <span class="token keyword">CONSTRAINT</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Survey_User1<span class="token punctuation">`</span></span>
+        <span class="token keyword">FOREIGN</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>User_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">REFERENCES</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>User<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">ON</span> <span class="token keyword">DELETE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span>
+        <span class="token keyword">ON</span> <span class="token keyword">UPDATE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span><span class="token punctuation">)</span>
+    <span class="token keyword">ENGINE</span> <span class="token operator">=</span> <span class="token keyword">InnoDB</span><span class="token punctuation">;</span>
+
+
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token comment">-- Table `mydb`.`Question`</span>
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token keyword">IF</span> <span class="token operator">NOT</span> <span class="token keyword">EXISTS</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Question<span class="token punctuation">`</span></span> <span class="token punctuation">(</span>
+    <span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>text<span class="token punctuation">`</span></span> <span class="token keyword">MEDIUMTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>type<span class="token punctuation">`</span></span> <span class="token keyword">TINYTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>Survey_id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">,</span> <span class="token identifier"><span class="token punctuation">`</span>Survey_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token keyword">INDEX</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Question_Survey1_idx<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>Survey_id<span class="token punctuation">`</span></span> <span class="token keyword">ASC</span><span class="token punctuation">)</span> VISIBLE<span class="token punctuation">,</span>
+    <span class="token keyword">CONSTRAINT</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Question_Survey1<span class="token punctuation">`</span></span>
+        <span class="token keyword">FOREIGN</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>Survey_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">REFERENCES</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Survey<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">ON</span> <span class="token keyword">DELETE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span>
+        <span class="token keyword">ON</span> <span class="token keyword">UPDATE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span><span class="token punctuation">)</span>
+    <span class="token keyword">ENGINE</span> <span class="token operator">=</span> <span class="token keyword">InnoDB</span><span class="token punctuation">;</span>
+
+
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token comment">-- Table `mydb`.`Answer`</span>
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token keyword">IF</span> <span class="token operator">NOT</span> <span class="token keyword">EXISTS</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Answer<span class="token punctuation">`</span></span> <span class="token punctuation">(</span>
+    <span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>text<span class="token punctuation">`</span></span> <span class="token keyword">MEDIUMTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>User_id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>Question_id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">,</span> <span class="token identifier"><span class="token punctuation">`</span>User_id<span class="token punctuation">`</span></span><span class="token punctuation">,</span> <span class="token identifier"><span class="token punctuation">`</span>Question_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token keyword">INDEX</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Answer_User_idx<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>User_id<span class="token punctuation">`</span></span> <span class="token keyword">ASC</span><span class="token punctuation">)</span> VISIBLE<span class="token punctuation">,</span>
+    <span class="token keyword">INDEX</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Answer_Question1_idx<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>Question_id<span class="token punctuation">`</span></span> <span class="token keyword">ASC</span><span class="token punctuation">)</span> VISIBLE<span class="token punctuation">,</span>
+    <span class="token keyword">CONSTRAINT</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Answer_User<span class="token punctuation">`</span></span>
+        <span class="token keyword">FOREIGN</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>User_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">REFERENCES</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>User<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">ON</span> <span class="token keyword">DELETE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span>
+        <span class="token keyword">ON</span> <span class="token keyword">UPDATE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span><span class="token punctuation">,</span>
+    <span class="token keyword">CONSTRAINT</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Answer_Question1<span class="token punctuation">`</span></span>
+        <span class="token keyword">FOREIGN</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>Question_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">REFERENCES</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Question<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">ON</span> <span class="token keyword">DELETE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span>
+        <span class="token keyword">ON</span> <span class="token keyword">UPDATE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span><span class="token punctuation">)</span>
+    <span class="token keyword">ENGINE</span> <span class="token operator">=</span> <span class="token keyword">InnoDB</span><span class="token punctuation">;</span>
+
+
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token comment">-- Table `mydb`.`Permission`</span>
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token keyword">IF</span> <span class="token operator">NOT</span> <span class="token keyword">EXISTS</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Permission<span class="token punctuation">`</span></span> <span class="token punctuation">(</span>
+    <span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>name<span class="token punctuation">`</span></span> <span class="token keyword">TINYTEXT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">,</span> <span class="token identifier"><span class="token punctuation">`</span>name<span class="token punctuation">`</span></span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">ENGINE</span> <span class="token operator">=</span> <span class="token keyword">InnoDB</span><span class="token punctuation">;</span>
+
+
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token comment">-- Table `mydb`.`Grant`</span>
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token keyword">IF</span> <span class="token operator">NOT</span> <span class="token keyword">EXISTS</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Grant<span class="token punctuation">`</span></span> <span class="token punctuation">(</span>
+    <span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>appointed<span class="token punctuation">`</span></span> <span class="token keyword">DATE</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>Role_id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>Permission_id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">,</span> <span class="token identifier"><span class="token punctuation">`</span>Role_id<span class="token punctuation">`</span></span><span class="token punctuation">,</span> <span class="token identifier"><span class="token punctuation">`</span>Permission_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token keyword">INDEX</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Grant_Role1_idx<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>Role_id<span class="token punctuation">`</span></span> <span class="token keyword">ASC</span><span class="token punctuation">)</span> VISIBLE<span class="token punctuation">,</span>
+    <span class="token keyword">INDEX</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Grant_Permission1_idx<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>Permission_id<span class="token punctuation">`</span></span> <span class="token keyword">ASC</span><span class="token punctuation">)</span> VISIBLE<span class="token punctuation">,</span>
+    <span class="token keyword">CONSTRAINT</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Grant_Role1<span class="token punctuation">`</span></span>
+        <span class="token keyword">FOREIGN</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>Role_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">REFERENCES</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Role<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">ON</span> <span class="token keyword">DELETE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span>
+        <span class="token keyword">ON</span> <span class="token keyword">UPDATE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span><span class="token punctuation">,</span>
+    <span class="token keyword">CONSTRAINT</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Grant_Permission1<span class="token punctuation">`</span></span>
+        <span class="token keyword">FOREIGN</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>Permission_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">REFERENCES</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Permission<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">ON</span> <span class="token keyword">DELETE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span>
+        <span class="token keyword">ON</span> <span class="token keyword">UPDATE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span><span class="token punctuation">)</span>
+    <span class="token keyword">ENGINE</span> <span class="token operator">=</span> <span class="token keyword">InnoDB</span><span class="token punctuation">;</span>
+
+
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token comment">-- Table `mydb`.`State`</span>
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token keyword">IF</span> <span class="token operator">NOT</span> <span class="token keyword">EXISTS</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>State<span class="token punctuation">`</span></span> <span class="token punctuation">(</span>
+    <span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>name<span class="token punctuation">`</span></span> <span class="token keyword">TINYTEXT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">ENGINE</span> <span class="token operator">=</span> <span class="token keyword">InnoDB</span><span class="token punctuation">;</span>
+
+
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token comment">-- Table `mydb`.`Action`</span>
+    <span class="token comment">-- -----------------------------------------------------</span>
+    <span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token keyword">IF</span> <span class="token operator">NOT</span> <span class="token keyword">EXISTS</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Action<span class="token punctuation">`</span></span> <span class="token punctuation">(</span>
+    <span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>date<span class="token punctuation">`</span></span> <span class="token keyword">DATE</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>Survey_id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>State_id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token identifier"><span class="token punctuation">`</span>Role_id<span class="token punctuation">`</span></span> <span class="token keyword">INT</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">,</span> <span class="token identifier"><span class="token punctuation">`</span>Survey_id<span class="token punctuation">`</span></span><span class="token punctuation">,</span> <span class="token identifier"><span class="token punctuation">`</span>State_id<span class="token punctuation">`</span></span><span class="token punctuation">,</span> <span class="token identifier"><span class="token punctuation">`</span>Role_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token keyword">INDEX</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Action_Survey1_idx<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>Survey_id<span class="token punctuation">`</span></span> <span class="token keyword">ASC</span><span class="token punctuation">)</span> VISIBLE<span class="token punctuation">,</span>
+    <span class="token keyword">INDEX</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Action_State1_idx<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>State_id<span class="token punctuation">`</span></span> <span class="token keyword">ASC</span><span class="token punctuation">)</span> VISIBLE<span class="token punctuation">,</span>
+    <span class="token keyword">INDEX</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Action_Role1_idx<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>Role_id<span class="token punctuation">`</span></span> <span class="token keyword">ASC</span><span class="token punctuation">)</span> VISIBLE<span class="token punctuation">,</span>
+    <span class="token keyword">CONSTRAINT</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Action_Survey1<span class="token punctuation">`</span></span>
+        <span class="token keyword">FOREIGN</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>Survey_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">REFERENCES</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Survey<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">ON</span> <span class="token keyword">DELETE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span>
+        <span class="token keyword">ON</span> <span class="token keyword">UPDATE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span><span class="token punctuation">,</span>
+    <span class="token keyword">CONSTRAINT</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Action_State1<span class="token punctuation">`</span></span>
+        <span class="token keyword">FOREIGN</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>State_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">REFERENCES</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>State<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">ON</span> <span class="token keyword">DELETE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span>
+        <span class="token keyword">ON</span> <span class="token keyword">UPDATE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span><span class="token punctuation">,</span>
+    <span class="token keyword">CONSTRAINT</span> <span class="token identifier"><span class="token punctuation">`</span>fk_Action_Role1<span class="token punctuation">`</span></span>
+        <span class="token keyword">FOREIGN</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>Role_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">REFERENCES</span> <span class="token identifier"><span class="token punctuation">`</span>mydb<span class="token punctuation">`</span></span><span class="token punctuation">.</span><span class="token identifier"><span class="token punctuation">`</span>Role<span class="token punctuation">`</span></span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">ON</span> <span class="token keyword">DELETE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span>
+        <span class="token keyword">ON</span> <span class="token keyword">UPDATE</span> <span class="token keyword">NO</span> <span class="token keyword">ACTION</span><span class="token punctuation">)</span>
+        <span class="token keyword">ENGINE</span> <span class="token operator">=</span> <span class="token keyword">InnoDB</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">SET</span> SQL_MODE<span class="token operator">=</span><span class="token variable">@OLD_SQL_MODE</span><span class="token punctuation">;</span>
+    <span class="token keyword">SET</span> FOREIGN_KEY_CHECKS<span class="token operator">=</span><span class="token variable">@OLD_FOREIGN_KEY_CHECKS</span><span class="token punctuation">;</span>
+    <span class="token keyword">SET</span> UNIQUE_CHECKS<span class="token operator">=</span><span class="token variable">@OLD_UNIQUE_CHECKS</span><span class="token punctuation">;</span>
+
+
+</code></pre></div><h2 id="restfull-сервіс-для-управління-даними"><a href="#restfull-сервіс-для-управління-даними" class="header-anchor">#</a> RESTfull сервіс для управління даними</h2> <p>RESTfull API для управління даними таблиці Survey створеної в MySQL
+було створено за допомогою фреймворку Spring Boot на мові Java.
+RESTfull API представляє собою CRUD застосунок.</p> <h3 id="фаили-для-сутностеи"><a href="#фаили-для-сутностеи" class="header-anchor">#</a> Файли для сутностей</h3> <div class="language- extra-class"><pre class="language-text"><code>import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString} from &quot;class-validator&quot;;
+import {SurveyState} from &quot;@prisma/client&quot;;
+export class CreateSurveyDTO{
+    @IsString()
+    @IsNotEmpty()
+    title: string
+    @IsString()
+    @IsOptional()
+    description?: string
+    @IsNumber()
+    @IsNotEmpty()
+    userId: number
+    @IsEnum(SurveyState)
+    @IsOptional()
+    state?: SurveyState
+}
+</code></pre></div><div class="language- extra-class"><pre class="language-text"><code>import {IsEnum, IsNumber, IsOptional, IsString} from &quot;class-validator&quot;;
+import {SurveyState} from &quot;@prisma/client&quot;;
+
+export class UpdateSurveyDTO {
+    @IsString()
+    @IsOptional()
+    title?: string
+    @IsString()
+    @IsOptional()
+    description?: string
+    @IsNumber()
+    @IsOptional()
+    userId?: number
+    @IsEnum(SurveyState)
+    @IsOptional()
+    state?: SurveyState
+}
+</code></pre></div><h3 id="підключення-бази-даних"><a href="#підключення-бази-даних" class="header-anchor">#</a> Підключення бази даних</h3> <div class="language- extra-class"><pre class="language-text"><code>  generator client {
+  provider = &quot;prisma-client-js&quot;
+}
+
+datasource db {
+  provider = &quot;postgresql&quot;
+  url      = env(&quot;DATABASE_URL&quot;)
+}
+
+model RoleHasPermission {
+  appointed     DateTime   @updatedAt @default(now())
+  roleId        Int        @map(&quot;role_id&quot;)
+  permissionId  Int        @map(&quot;permission_id&quot;)
+  permission    Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  role          Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  @@map(&quot;role_has_permission&quot;)
+  @@id([roleId, permissionId])
+}
+
+model Permission {
+  id      Int                     @id @default(autoincrement())
+  name    String
+  roles   RoleHasPermission[]
+  @@map(&quot;permission&quot;)
+}
+
+model AnswerVariant {
+  id            Int       @id @default(autoincrement())
+  text          String
+  question      Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId    Int       @map(&quot;question_id&quot;)
+  answers       Answer[]
+  @@map(&quot;answer_variant&quot;)
+}
+
+model Question {
+  id                Int                @id @default(autoincrement())
+  text              String
+  surveyId         Int                 @map(&quot;survey_id&quot;)
+  survey            Survey             @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  answerVariants   AnswerVariant[]
+  @@map(&quot;question&quot;)
+}
+
+model Role {
+  id            Int                     @id @default(autoincrement())
+  name          String
+  permissions   RoleHasPermission[]
+  users         User[]
+  @@map(&quot;role&quot;)
+}
+
+enum SurveyState {
+  OPENED
+  CLOSED
+  PAUSED
+}
+
+model Survey {
+  id             Int              @id @default(autoincrement())
+  title          String
+  description    String?
+  created        DateTime         @default(now())
+  userId        Int              @map(&quot;user_id&quot;)
+  state          SurveyState      @default(OPENED)
+  questions      Question[]
+  passedSurvey  PassedSurvey[]
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map(&quot;survey&quot;)
+}
+
+model PassedSurvey {
+  id         Int          @id @default(autoincrement())
+  survey     Survey       @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  surveyId  Int          @map(&quot;survey_id&quot;)
+  passed     DateTime     @default(now())
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int           @map(&quot;user_id&quot;)
+  answers    Answer[]
+  @@map(&quot;passedSurvey&quot;)
+}
+
+model Answer {
+  id                  Int               @id @default(autoincrement())
+  variant             AnswerVariant     @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  variantId          Int               @map(&quot;variant_id&quot;)
+  passedSurveyId    Int               @map(&quot;passed_survey_id&quot;)
+  survey              PassedSurvey      @relation(fields: [passedSurveyId], references: [id], onDelete: Cascade)
+  @@map(&quot;answer&quot;)
+}
+
+model User {
+  id              Int      @id @default(autoincrement())
+  firstname       String
+  lastname        String
+  nickname        String
+  email           String
+  password        String
+  roleId         Int       @map(&quot;role_id&quot;)
+  passedSurveys  PassedSurvey[]
+  surveys         Survey[]
+  role            Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  @@map(&quot;user&quot;)
+}
+
+
+</code></pre></div><h3 id="основнии-клас-для-запуску-api"><a href="#основнии-клас-для-запуску-api" class="header-anchor">#</a> Основний клас для запуску API</h3> <div class="language- extra-class"><pre class="language-text"><code>import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import {ValidationPipe} from &quot;@nestjs/common&quot;;
+
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
+  await app.listen(3000);
+}
+bootstrap();
+
+</code></pre></div><h3 id="контролер-для-роботи-з-опитуваннями"><a href="#контролер-для-роботи-з-опитуваннями" class="header-anchor">#</a> Контролер для роботи з опитуваннями</h3> <div class="language- extra-class"><pre class="language-text"><code>import {Body, Controller, Delete, Get, Param, Patch, Post} from &quot;@nestjs/common&quot;;
+import {SurveyService} from &quot;./SurveyService&quot;;
+import {CreateSurveyDTO} from &quot;./dto/CreateSurveyDTO&quot;;
+import {SurveyPipe} from &quot;./pipes/SurveyPipe&quot;;
+import {SurveyByIdPipe} from &quot;./pipes/SurveyByIdPipe&quot;;
+import {UpdateSurveyDTO} from &quot;./dto/UpdateSurveyDTO&quot;;
+
+@Controller('/survey')
+export class SurveyController {
+    constructor(private readonly surveyService: SurveyService) {
+    }
+
+    @Post()
+    create(@Body(SurveyPipe) body: CreateSurveyDTO) {
+        return this.surveyService.create(body)
+
+    }
+
+    @Get('/:surveyId')
+    getById (
+        @Param('surveyId', SurveyByIdPipe) surveyId: number
+    ) {
+        return this.surveyService.getById(surveyId);
+    }
+
+    @Patch('/:surveyId')
+    update (
+        @Param('surveyId', SurveyByIdPipe) surveyId: number,
+        @Body() body: UpdateSurveyDTO,
+    ) {
+        return this.surveyService.updateById(surveyId, body);
+    }
+
+    @Delete('/:surveyId')
+    deleteById (
+        @Param('surveyId', SurveyByIdPipe) surveyId: number,
+    ) {
+        return this.surveyService.deleteById(surveyId);
+    }
+}
+</code></pre></div><h3 id="репозиторіи-для-роботи-з-опитуванняи"><a href="#репозиторіи-для-роботи-з-опитуванняи" class="header-anchor">#</a> Репозиторій для роботи з опитуванняи</h3> <div class="language- extra-class"><pre class="language-text"><code>import {Injectable} from &quot;@nestjs/common&quot;;
+import {PrismaService} from &quot;../PrismaService&quot;;
+import {Prisma} from &quot;@prisma/client&quot;;
+
+@Injectable()
+export class SurveyRepository{
+    constructor(private readonly prismaService: PrismaService) {}
+    create(data: Prisma.SurveyUncheckedCreateInput){
+        return this.prismaService.survey.create({data})
+    }
+
+    getById (id: number) {
+        return this.prismaService.survey.findUnique({
+            where: {
+                id,
+            },
+        });
+    }
+
+    updateById (id: number, data: Prisma.SurveyUncheckedUpdateInput) {
+        return this.prismaService.survey.update({
+            where: {
+                id,
+            },
+            data,
+        });
+    }
+
+    deleteById (id: number) {
+        return this.prismaService.survey.delete({
+            where: {
+                id,
+            },
+        });
+    }
+}
+</code></pre></div><h3 id="репозиторіи-для-роботи-з-користувачем"><a href="#репозиторіи-для-роботи-з-користувачем" class="header-anchor">#</a> Репозиторій для роботи з користувачем</h3> <div class="language- extra-class"><pre class="language-text"><code>import {Injectable} from &quot;@nestjs/common&quot;;
+import {PrismaService} from &quot;../PrismaService&quot;;
+
+@Injectable()
+export class UserRepository {
+    constructor (
+        private readonly prismaService: PrismaService,
+    ) {}
+
+    getById (id: number) {
+        return this.prismaService.user.findUnique({
+            where: {
+                id,
+            },
+        });
+    }
+}
+</code></pre></div><h3 id="сервіс-для-роботи-з-опитуваннями"><a href="#сервіс-для-роботи-з-опитуваннями" class="header-anchor">#</a> Сервіс для роботи з опитуваннями</h3> <div class="language- extra-class"><pre class="language-text"><code>import {Injectable} from &quot;@nestjs/common&quot;;
+import {SurveyRepository} from &quot;./repositories/SurveyRepository&quot;;
+import {CreateSurveyDTO} from &quot;./dto/CreateSurveyDTO&quot;;
+import {UpdateSurveyDTO} from &quot;./dto/UpdateSurveyDTO&quot;;
+
+@Injectable()
+export class SurveyService{
+    constructor(private readonly surveyRepository: SurveyRepository) {}
+
+    create(body: CreateSurveyDTO){
+        return this.surveyRepository.create(body)
+    }
+
+    getById (id: number) {
+        return this.surveyRepository.getById(id);
+    }
+
+    updateById (id: number, body: UpdateSurveyDTO) {
+        return this.surveyRepository.updateById(id, body);
+    }
+
+    deleteById (id: number) {
+        return this.surveyRepository.deleteById(id);
+    }
+}
+</code></pre></div><h3 id="виняткові-ситуаціі-які-можуть-виникнути"><a href="#виняткові-ситуаціі-які-можуть-виникнути" class="header-anchor">#</a> Виняткові ситуації, які можуть виникнути</h3> <div class="language- extra-class"><pre class="language-text"><code>import {Injectable, NotFoundException, PipeTransform} from &quot;@nestjs/common&quot;;
+import {SurveyRepository} from &quot;../repositories/SurveyRepository&quot;;
+@Injectable()
+export class SurveyByIdPipe implements PipeTransform {
+    constructor(
+        private readonly surveyRepository: SurveyRepository,
+    ) {}
+    async transform(surveyId: number) {
+        const survey = await this.surveyRepository.getById(+surveyId);
+
+        if (!survey) throw new NotFoundException('Survey with such id is not found');
+
+        return +surveyId;
+    }
+}
+</code></pre></div><div class="language- extra-class"><pre class="language-text"><code>import {Injectable, NotFoundException, PipeTransform} from &quot;@nestjs/common&quot;;
+import {CreateSurveyDTO} from &quot;../dto/CreateSurveyDTO&quot;;
+import {UserRepository} from &quot;../repositories/UserRepository&quot;;
+
+@Injectable()
+export class SurveyPipe implements PipeTransform {
+    constructor(
+        private readonly userRepository: UserRepository,
+    ) {}
+    async transform(body: CreateSurveyDTO) {
+        const user = await this.userRepository.getById(body.userId);
+
+        if (!user) throw new NotFoundException('User with such id is not found');
+
+        return body;
+    }
+}
+</code></pre></div></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Останнє оновлення:</span> <span class="time">12/25/2023, 9:44:57 PM</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/db_course_work/design/" class="prev">
+        Проектування інформаційного забезпечення
+      </a></span> <span class="next"><a href="/db_course_work/test/">
+        Тестування працездатності системи
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"><!----></div></div>
+    <script src="/db_course_work/assets/js/app.a561e542.js" defer></script><script src="/db_course_work/assets/js/2.35499e44.js" defer></script><script src="/db_course_work/assets/js/1.3c0c2200.js" defer></script><script src="/db_course_work/assets/js/38.e50702e8.js" defer></script>
+  </body>
+</html>
